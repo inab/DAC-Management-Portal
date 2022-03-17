@@ -1,0 +1,14 @@
+# Here is the list of registered users and their credentials, that you will have to use after accessing the DAC-Portal UI: http://172.21.0.14:3080
+
+username: dac-admin-1 | dac-admin-2 | dac-admin-3
+password: dac-admin-1 | dac-admin-2 | dac-admin-3
+
+username: dac-member-1 | dac-member-2 | dac-member-3
+password: dac-member-1 | dac-member-2 | dac-member-3
+
+username: user-1 | user-2 | user-3
+password: user-1 | user-2 | user-3
+
+username: dac-manager 
+password: dac-manager
+~               
