@@ -1,0 +1,89 @@
+version: '3'
+services:
+  mariadb:
+    image: mariadb
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+    volumes:
+      - "./ipc-test-data/mariadb/:/var/lib/mysql/"
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.21
+  nextcloud-app:
+    image: nextcloud:19.0.0
+    restart: always
+    ports:
+      - "7080:80"
+    links:
+      - mariadb
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_HOST: ${MYSQL_HOST}
+      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
+      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
+    volumes:
+      - "./ipc-test-data/nextcloud/config/:/var/www/html/config/"
+      - "./ipc-test-data/nextcloud/data/:/var/www/html/data/"
+      - "./ipc-test-data/nextcloud/custom_apps/:/var/www/html/custom_apps/"
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.20
+  dac-management:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:3000"
+    volumes:
+      - "./src:/app/src"
+      - "./pages:/app/pages"
+    env_file:
+      - .env
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.22
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.13
+  keycloak:
+    image: quay.io/keycloak/keycloak:15.0.2
+    environment:
+      DB_VENDOR: ${DB_VENDOR}
+      DB_ADDR: ${DB_ADDR}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_SCHEMA: ${DB_SCHEMA}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+    volumes:
+      - "./ipc-test-data/keycloak/realms:/opt/jboss/keycloak/imports"
+      - "./ipc-plugins/keycloak:/opt/jboss/keycloak/standalone/deployments"
+    command:
+      - '-b 0.0.0.0 -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/opt/jboss/keycloak/imports/realm-export.json -Dkeycloak.migration.strategy=IGNORE_EXISTING'
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.12
+networks:
+  dac-network:
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
