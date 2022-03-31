@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+RUN npm install -timeout=9999999
 
 CMD ["npm", "run", "dev"]
