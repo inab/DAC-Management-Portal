@@ -41,10 +41,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4000:3000"
+      - "4000:4000"
     volumes:
       - "./src:/app/src"
       - "./pages:/app/pages"
+      - "./styles:/app/styles:"
     env_file:
       - .env
     networks:
@@ -82,6 +83,32 @@ services:
     networks:
       dac-network:
         ipv4_address: 172.21.0.12
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.24
+  mongo:
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    volumes:
+      - "./ipc-test-data/mdbdata:/data/db"
+    ports:
+      - 27017:27017
+    networks:
+      dac-network:
+        ipv4_address: 172.21.0.10
 networks:
   dac-network:
     ipam:
