@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+// Font families
+$font-family: 'Roboto', sans-serif;
+
+// Colors of the iPC project
+$color-primary: #75B9BE;
+$color-secondary: #7bdcb5;
+
+// Font weights
+$font-weights: (
+    'font-weight-thin' : 100, 
+    'font-weight-light' : 250,
+    'font-weight-regular' : 400,
+    'font-weight-thick' : 700
+);
+
+@function font-weight($font-weight-style) {
+    @return map-get($font-weights, $font-weight-style)
+};
+
+// Font Size
+$font-sizes: (
+    'font-size-small' : 1.2rem, 
+    'font-size-medium' : 1.5rem,
+    'font-size-large' : 2rem,
+    'font-size-xlarge' : 2.5rem
+);
+
+@function font-size($font-size-style) {
+    @return map-get($font-sizes, $font-size-style)
+}

@@ -1,0 +1,24 @@
+@mixin btn {
+  font-family: $font-family;
+  font-size: font-size(font-size-small);
+  outline: 0;
+  border: 0;
+  width: 100%;
+  padding: 15px;
+  background: $color-primary;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@mixin input {
+  font-family: $font-family;
+  font-size: font-size(font-size-small);
+  width: 100%;
+  margin: 0 0 1rem 0;
+  padding: 0.5rem;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+  background: #d6d6d6e8;
+}

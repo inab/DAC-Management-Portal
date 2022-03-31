@@ -1,0 +1,28 @@
+.card {
+    font-family: $font-family;
+    margin: 0.25rem;
+    padding: 1.5rem;
+    text-align: left;
+    color: black;
+    text-decoration: none;
+    border: 1px solid $color-secondary;
+    border-radius: 15px;
+    max-width: 300px;
+  }
+  
+  .card:hover {
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+  
+  .card h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+  
+  .card p {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+  
