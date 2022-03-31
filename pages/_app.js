@@ -1,16 +1,10 @@
-import '../styles/globals.css'
-import Nav from '../src/components/Navbar'
-import 'bootstrap/dist/css/bootstrap.css'
-import { SessionProvider } from "next-auth/react";
+import '../styles/sass/App.scss';
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={session}>
-      <div>
-        <Nav /> 
-        <Component {...pageProps} />
-      </div>
-    </SessionProvider >
+    <div>
+      <Component {...pageProps} />
+    </div>
   )
 }
 
