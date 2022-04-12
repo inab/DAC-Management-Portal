@@ -1,46 +1,79 @@
-import React from 'react';
+import { React, useState } from 'react';
 import { basicAuthRequest, basicAuthRequestWithHeaders } from '../../../src/lib/requests';
 import { getUsersMask, applyUsersMask } from '../../../src/lib/filter';
 import parseXml from '../../../src/lib/parseXml';
-import getUsers from '../../../src/getUsers';
+import { getUsers } from '../../../src/getUsers';
 import axios from 'axios';
+import Multiselect from "multiselect-react-dropdown";
 
 export default function item(data) {
+    const [users, setUsers] = useState(data.submitterAndGroup);
+    const [resources, setResources] = useState(data.urn);
+    const [admin, setAdmin] = useState([]);
+    const [controlledResources, setControlledResources] = useState([]);
+
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        try {
-          await axios.post(`/api/create/${data.id}`);
-          alert("DAC created")
-        } catch(e) {
-          alert(e)
+        if(admin.length > 0 && controlledResources.length > 0) {
+            try {
+                await axios.post(`/api/create/${data.id}`, { admin, controlledResources });
+                alert("DAC created")
+            } catch (e) {
+                alert(e)
+            }
+        } else {
+            alert("Please, select at least one DAC-admin & resource")
         }
     };
 
+    const adminHandler = (e) => {
+        setAdmin(e);
+    }
+
+    const controlledResourcesHandler = (e) => {
+        setControlledResources(e);
+    }
+
+    const dropdownStyle = {
+        searchBox: {
+          margin: 0,
+          border: "none",
+          width: 350,
+          height: 350
+        },
+        option: { verticalAlign: "middle" }
+      };
+
     return (
-      <div>
-        <h4>
-           Datasets (iPC group folder)
-        </h4>
-        <ul>
-            {data.files.map(el => ( <li> {el} </li> ))}
-        </ul>
-        
-        <h4>
-           Username and ID
-        </h4>
-        <ul>
-            {data.submitters.map(el => ( <li> {el.username} || {el.id}  </li>))}
-        </ul>
-        
-        <h4>
-           Data submitter
-        </h4>
-        <ul>
-            {data.submitterAndGroup.map(el => ( <li> {el.id} || {el.groups}  </li> ))}
-        </ul>
+        <>
+        <h2> Create DAC: {data.id} </h2>
+        <div class="main">
+            <div class="panel">
+                <div class="panel-box" style={{ width: "375px" }}>
+                    <p> Select DAC-admin/s </p>
+                    <Multiselect
+                        isObject={false}
+                        onSelect={adminHandler}
+                        options={users}
+                        showCheckbox
+                        style={dropdownStyle} 
+                    />
+                </div>
+                <div class="panel-box" style={{ width: "375px" }}>
+                    <p> Select resource/s </p>
+                    <Multiselect
+                        isObject={false}
+                        onSelect={controlledResourcesHandler}
+                        options={resources}
+                        showCheckbox
+                        style={dropdownStyle}
+                    />
+                </div>
+            </div>
+        </div>
         <button onClick={(e) => submitHandler(e)}> Send </button>
-      </div>
+        </>
     )
 }
 
@@ -63,7 +96,7 @@ export async function getServerSideProps(context) {
         method: 'get',
         endpoint: '/ocs/v1.php/cloud/users',
         headers: {
-            "OCS-APIRequest" : true
+            "OCS-APIRequest": true
         }
     }
 
@@ -71,9 +104,11 @@ export async function getServerSideProps(context) {
     const keycloakUsers = await getUsers();
     let nextcloudUsers = await basicAuthRequestWithHeaders(usersRequest)
     const xmlFiles = await basicAuthRequest(filesRequest)
-    
+
     // PARSING DATA: FILES (RESOURCES) AND USERS 
-    const files = await parseXml(xmlFiles.data)
+    let files = await parseXml(xmlFiles.data)
+    let urn = [].concat.apply([], files.map(el => process.env.NEXTCLOUD_DOMAIN + ":" + el[0]["oc:fileid"]))
+
     nextcloudUsers = nextcloudUsers.data.ocs.data.users
 
     // ADDITIONAL QUERIES TO THE NEXTCLOUD OCS ENDPOINT: USER GROUPS
@@ -96,20 +131,19 @@ export async function getServerSideProps(context) {
 
     // COMBINE GROUPS (DATA SUBMISSION GROUP) + USERS AND DESTRUCTURING FOR RENDERING
     let submitterAndGroup = [];
-    
+
     submitters.map(el => userIdAndGroups.forEach(it => {
-        if(el.username === it.id) {
-            let object = { ...it, ...el }
-            submitterAndGroup.push(object)
+        if (el.username === it.id) {
+            let selector = it.id;
+            submitterAndGroup.push(selector)
         }
     }))
 
     return {
-      props: {
-        files, 
-        submitters,
-        submitterAndGroup,
-        id
-      },
+        props: {
+            urn,
+            submitterAndGroup,
+            id
+        },
     }
-  }
+}
