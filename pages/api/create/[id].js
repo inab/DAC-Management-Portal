@@ -1,19 +1,29 @@
 import { authentication } from "../../../src/middleware/auth";
-import clientPromise from "../../../src/utils/db";
 import sendMessage from "../../../src/utils/amqp";
+import { getUserByUsername } from '../../../src/getUsers';
+import { postRoles, postResources, postMembers } from '../../../src/services/helpers';
 
 export default authentication(async function handler(req, res) {
   const { id } = req.query;
+  const { admin, controlledResources } = req.body;
 
-  const client = await clientPromise;
-  const db = await client.db("dac-portal-api");
+  const dacId = "IPC00000000005";
+  const role = dacId + ":" + "dac-admin";
+  const users = await Promise.all(admin.map(async(user) => await getUserByUsername(user)));
 
-  //const dacs = await db.collection('dacs').find({ 'dacId': "y" }).toArray();
-  //const roles = await db.collection('userRoles').find({ 'sub': "z" }).toArray();
+  await Promise.all(users[0].map(async (userInfo) => {
+    await postRoles('userRoles', userInfo.id, role);
+  }))
 
-  // create collections in dac-portal DB
+  await Promise.all(controlledResources.map(async (file) => {
+    await postResources('dacs', dacId, file) })
+  );
 
-  const message = { source: "dac-management", userEmail: "test@bsc.es", dataset: "https://test-url/TF009", dacId: "x" };
+  await Promise.all(users[0].map(async (userInfo) => {
+    await postMembers('dacs', dacId, userInfo.id) })
+  );
+
+  const message = { source: "dac-management", userEmail: users[0].email, dataset: controlledResources, dacId: "x" };
 
   await sendMessage(JSON.stringify(message));
 
