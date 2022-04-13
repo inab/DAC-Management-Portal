@@ -20,9 +20,11 @@ const postRoles = async (col, userId, role) => {
     return response
 }
 
-const postResources = async (col, dacId, fileId) => {
+const postResources = async (col, dacId, resource) => {
     const db = await connectToDACdb();
-    const acl = dacId + ":" + fileId;
+    const fileId = resource.split(":").pop();
+    const acl = dacId + ":" + resource;
+    
     const response = await db.collection(col).updateOne(
         { 'dacId': dacId },
         {
@@ -49,7 +51,7 @@ const postMembers = async (col, dacId, userId) => {
             }
         },  
         { new: true, upsert: true })
-        
+
     return response
 }
 
