@@ -8,22 +8,23 @@ import Multiselect from "multiselect-react-dropdown";
 
 export default function item(data) {
     const [users, setUsers] = useState(data.submitterAndGroup);
-    const [resources, setResources] = useState(data.urn);
+    const [files, setFiles] = useState(data.fileIds);
+    const [filesName, setFilesName] = useState(data.filesName);
     const [admin, setAdmin] = useState([]);
-    const [controlledResources, setControlledResources] = useState([]);
+    const [controlledFiles, setControlledFiles] = useState([]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        if(admin.length > 0 && controlledResources.length > 0) {
+        if(admin.length > 0 && controlledFiles.length > 0) {
             try {
-                await axios.post(`/api/create/${data.id}`, { admin, controlledResources });
+                await axios.post(`/api/create/${data.id}`, { admin, controlledFiles });
                 alert("DAC created")
             } catch (e) {
                 alert(e)
             }
         } else {
-            alert("Please, select at least one DAC-admin & resource")
+            alert("Please, select at least one DAC-admin & file")
         }
     };
 
@@ -31,8 +32,10 @@ export default function item(data) {
         setAdmin(e);
     }
 
-    const controlledResourcesHandler = (e) => {
-        setControlledResources(e);
+    const controlledFilesHandler = (e) => {
+        const indexes = e.map(item => filesName.indexOf(item));
+        const ids = files.filter((item, idx) => indexes.includes(idx)); 
+        setControlledFiles(ids);
     }
 
     const dropdownStyle = {
@@ -64,8 +67,8 @@ export default function item(data) {
                     <p> Select resource/s </p>
                     <Multiselect
                         isObject={false}
-                        onSelect={controlledResourcesHandler}
-                        options={resources}
+                        onSelect={controlledFilesHandler}
+                        options={filesName}
                         showCheckbox
                         style={dropdownStyle}
                     />
@@ -106,9 +109,11 @@ export async function getServerSideProps(context) {
     const xmlFiles = await basicAuthRequest(filesRequest)
 
     // PARSING DATA: FILES (RESOURCES) AND USERS 
-    let files = await parseXml(xmlFiles.data)
-    let urn = [].concat.apply([], files.map(el => process.env.NEXTCLOUD_DOMAIN + ":" + el[0]["oc:fileid"]))
-
+    let { fileIds, filePath } = await parseXml(xmlFiles.data)
+    // let urn = [].concat.apply([], fileIds.map(el => process.env.NEXTCLOUD_DOMAIN + ":" + el[0]["oc:fileid"]))
+    fileIds = [].concat.apply([], fileIds.map(el => el[0]["oc:fileid"]))
+    let filesName = [].concat.apply([], filePath.map(el => el[0].split("/").pop()))
+ 
     nextcloudUsers = nextcloudUsers.data.ocs.data.users
 
     // ADDITIONAL QUERIES TO THE NEXTCLOUD OCS ENDPOINT: USER GROUPS
@@ -141,7 +146,8 @@ export async function getServerSideProps(context) {
 
     return {
         props: {
-            urn,
+            fileIds,
+            filesName,
             submitterAndGroup,
             id
         },
