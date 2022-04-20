@@ -14,6 +14,8 @@ export default authentication(async function handler(req, res) {
   const role = dacId + ":" + "dac-admin";
 
   const users = await Promise.all(admin.map(async(user) => await getUserByUsername(user)));
+  
+  const emails = users[0].map(el => el.email)
 
   await Promise.all(users[0].map(async (userInfo) => {
     await postRoles('userRoles', userInfo.id, role);
@@ -29,7 +31,7 @@ export default authentication(async function handler(req, res) {
 
   await updateIds('dacs', dacId);
 
-  const message = { source: "dac-management", userEmail: users[0].email, dataset: controlledFiles, dacId: "x" };
+  const message = { source: "dac-management", userEmail: emails, dataset: controlledFiles.join(","), dacId: dacId };
 
   await sendMessage(JSON.stringify(message));
 
