@@ -14,10 +14,10 @@ export default authentication(async function handler(req, res) {
   const role = dacId + ":" + "dac-admin";
 
   const users = await Promise.all(admin.map(async(user) => await getUserByUsername(user)));
-  
-  const emails = users[0].map(el => el.email)
 
-  await Promise.all(users[0].map(async (userInfo) => {
+  const emails = users.flat().map(el => el.email)
+
+  await Promise.all(users.flat().map(async (userInfo) => {
     await postRoles('userRoles', userInfo.id, role);
   }))
 
@@ -25,13 +25,13 @@ export default authentication(async function handler(req, res) {
     await postResources('dacs', dacId, resource) })
   );
 
-  await Promise.all(users[0].map(async (userInfo) => {
+  await Promise.all(users.flat().map(async (userInfo) => {
     await postMembers('dacs', dacId, userInfo.id) })
   );
 
   await updateIds('dacs', dacId);
 
-  const message = { source: "dac-management", userEmail: emails, dataset: controlledFiles.join(","), dacId: dacId };
+  const message = { source: "dac-management", userEmail: emails.join(","), dacsEmail: emails.join(","), dataset: controlledFiles.join(","), dacId: dacId };
 
   await sendMessage(JSON.stringify(message));
 
