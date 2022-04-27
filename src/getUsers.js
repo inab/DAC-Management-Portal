@@ -27,4 +27,9 @@ const getUserByUsername = async (id) => {
     return await kcClient.users.findOne({username: id})
 }
 
-export { getUsers, getUserByUsername }
+const getUserById = async (id) => {
+    const kcClient = await initKcClient();
+    return await kcClient.users.findOne({id: id})
+}
+
+export { getUsers, getUserByUsername, getUserById }
