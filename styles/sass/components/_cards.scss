@@ -1,4 +1,4 @@
-.card {
+.card-panel {
     font-family: $font-family;
     margin: 0.25rem;
     padding: 1.5rem;
@@ -10,17 +10,17 @@
     max-width: 300px;
   }
   
-  .card:hover {
+  .card-panel:hover {
     color: $color-primary;
     border-color: $color-primary;
   }
   
-  .card h2 {
+  .card-panel h2 {
     margin: 0 0 1rem 0;
     font-size: 1.5rem;
   }
   
-  .card p {
+  .card-panel p {
     margin: 0;
     font-size: 1.25rem;
     line-height: 1.5;
