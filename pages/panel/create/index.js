@@ -2,32 +2,38 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function create(data) {
-    return (
-      <div>
-        <h4>
-           Please select a submission group/folder:
-        </h4>
-        <ul>
-            {data.groups.map((el,index) => 
-                ( 
-                    <li key={index}>
-                        <Link key={index} href="/panel/create/[id]" as={`/panel/create/${el}`}> 
-                            <a> {el} </a> 
-                        </Link>
-                    </li> 
-                ) 
-            )}
-        </ul>
+  return (
+    <div class="container">
+      <div class="content-wrapper">
+        <div class="row justify-content-center text-center">
+          <h4>
+            Please select a submission group/folder
+          </h4>
+          <div class="col-6">
+            <ul class="list-group list-group-hover list-group-striped">
+              {data.groups.map((el, index) =>
+              (
+                <li key={index} class="list-group-item">
+                  <Link key={index} href="/panel/create/[id]" as={`/panel/create/${el}`}>
+                    <a> {el} </a>
+                  </Link>
+                </li>
+              )
+              )}
+            </ul>
+          </div>
+        </div>
       </div>
-    )
+    </div>
+  )
 }
 
 export async function getServerSideProps() {
-    let groups = ["IPC", "CURIE", "R2"]
+  let groups = ["IPC", "CURIE", "R2"]
 
-    return {
-      props: {
-        groups
-      },
-    }
+  return {
+    props: {
+      groups
+    },
   }
+}
