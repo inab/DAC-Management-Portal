@@ -16,7 +16,7 @@ export default function item(data) {
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        if(admin.length > 0 && controlledFiles.length > 0) {
+        if (admin.length > 0 && controlledFiles.length > 0) {
             try {
                 await axios.post(`/api/create/${data.id}`, { admin, controlledFiles });
                 alert("DAC created")
@@ -34,49 +34,67 @@ export default function item(data) {
 
     const controlledFilesHandler = (e) => {
         const indexes = e.map(item => filesName.indexOf(item));
-        const ids = files.filter((item, idx) => indexes.includes(idx)); 
+        const ids = files.filter((item, idx) => indexes.includes(idx));
         setControlledFiles(ids);
     }
 
     const dropdownStyle = {
         searchBox: {
-          margin: 0,
-          border: "none",
-          width: 350,
-          height: 350
+            margin: 0,
+            border: "none",
+            height: 150
         },
         option: { verticalAlign: "middle" }
-      };
+    };
 
     return (
-        <>
-        <h2> Create DAC: {data.id} </h2>
-        <div class="main">
-            <div class="panel">
-                <div class="panel-box" style={{ width: "375px" }}>
-                    <p> Select DAC-admin/s </p>
-                    <Multiselect
-                        isObject={false}
-                        onSelect={adminHandler}
-                        options={users}
-                        showCheckbox
-                        style={dropdownStyle} 
-                    />
-                </div>
-                <div class="panel-box" style={{ width: "375px" }}>
-                    <p> Select resource/s </p>
-                    <Multiselect
-                        isObject={false}
-                        onSelect={controlledFilesHandler}
-                        options={filesName}
-                        showCheckbox
-                        style={dropdownStyle}
-                    />
+        <div class="container">
+            <div class="content-wrapper">
+                <div class="row justify-content-center text-center">
+                    <h2> Create DAC - {data.id} </h2>
+                    <div class="col-5 m-1">
+                        <div class="card">
+                            <div class="card-header">
+                                Roles
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"> Select administrators for this DAC </p>
+                                <Multiselect
+                                    isObject={false}
+                                    onSelect={adminHandler}
+                                    options={users}
+                                    showCheckbox
+                                    style={dropdownStyle}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5 m-1">
+                        <div class="card">
+                            <div class="card-header">
+                                Resources
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"> Select resources for this DAC </p>
+                                <Multiselect
+                                    isObject={false}
+                                    onSelect={controlledFilesHandler}
+                                    options={filesName}
+                                    showCheckbox
+                                    style={dropdownStyle}
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                </div> 
+                <div class="row justify-content-center text-center mt-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <button onClick={(e) => submitHandler(e)}> Send </button>
-        </>
     )
 }
 
@@ -113,7 +131,7 @@ export async function getServerSideProps(context) {
     // let urn = [].concat.apply([], fileIds.map(el => process.env.NEXTCLOUD_DOMAIN + ":" + el[0]["oc:fileid"]))
     fileIds = [].concat.apply([], fileIds.map(el => el[0]["oc:fileid"]))
     let filesName = [].concat.apply([], filePath.map(el => el[0].split("/").pop()))
- 
+
     nextcloudUsers = nextcloudUsers.data.ocs.data.users
 
     // ADDITIONAL QUERIES TO THE NEXTCLOUD OCS ENDPOINT: USER GROUPS
