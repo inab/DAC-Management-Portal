@@ -55,6 +55,20 @@ const postMembers = async (col, dacId, userId) => {
     return response
 }
 
+const validateDacInfo = async (col, dacId, status) => {
+    const db = await connectToDACdb();
+    const response = await db.collection(col).updateOne(
+        { 'dacId': dacId },
+        {
+            $set: {
+                'info.status': status
+            }
+        },  
+        { new: true, upsert: true })
+
+    return response 
+}
+
 const getDacInfo = async (col, dacId) => {
     const db = await connectToDACdb();
     const data = await db.collection(col).find({ 'dacId' : dacId }).toArray()
@@ -97,4 +111,4 @@ const getIds = async (col) => {
 }
 
 
-export { postRoles, postResources, postMembers, generateIds, updateIds, getIds, getDacInfo };
+export { postRoles, postResources, postMembers, generateIds, updateIds, getIds, getDacInfo, validateDacInfo };
