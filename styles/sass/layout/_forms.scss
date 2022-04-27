@@ -16,3 +16,22 @@
     @include btn;
   }
 }
+
+.form-dac {
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  background: #ffffff;
+  border: solid 1px grey;
+}
+
+.form-dac {
+  input {
+    @include input;
+  }
+  .btn {
+    @include btn;
+  }
+}
