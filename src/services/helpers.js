@@ -76,6 +76,20 @@ const getDacInfo = async (col, dacId) => {
     return info
 }
 
+const getRoles = async (col, userId) => {
+    const db = await connectToDACdb();
+    const data = await db.collection(col).find({ 'sub' : userId }).toArray()
+    const { sub, roles } = {...data[0]}
+    return { sub, roles }
+}
+
+const getMembers = async (col, dacId) => {
+    const db = await connectToDACdb();
+    const data = await db.collection(col).find({ 'dacId' : dacId }).toArray()
+    const { members } = {...data[0]}
+    return members
+}
+
 const generateIds = async (col) => {
     const db = await connectToMgtdb();
     const docs = await db.collection(col).find().toArray()
@@ -111,4 +125,13 @@ const getIds = async (col) => {
 }
 
 
-export { postRoles, postResources, postMembers, generateIds, updateIds, getIds, getDacInfo, validateDacInfo };
+export { postRoles, 
+         postResources, 
+         postMembers, 
+         generateIds, 
+         updateIds, 
+         getIds, 
+         getDacInfo, 
+         validateDacInfo, 
+         getRoles,
+         getMembers };
