@@ -37,7 +37,7 @@ export default function item(data) {
                             <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e, true)}> Accept </button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e, false)}> Reject </button>
+                            <button type="button" class="btn btn-danger w-100" onClick={(e) => submitHandler(e, false)}> Reject </button>
                         </div>
                     </div>
                 </div>

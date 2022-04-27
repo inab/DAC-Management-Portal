@@ -6,9 +6,7 @@
   padding: 45px;
   background: #ffffff;
   border: solid 1px grey;
-}
-
-.form {
+  
   input {
     @include input;
   }
@@ -25,13 +23,8 @@
   padding: 45px;
   background: #ffffff;
   border: solid 1px grey;
-}
 
-.form-dac {
   input {
     @include input;
-  }
-  .btn {
-    @include btn;
   }
 }
