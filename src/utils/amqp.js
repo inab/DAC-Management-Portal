@@ -9,7 +9,7 @@ const connectToChannel = async () => {
     }
 }
 
-export default async (data, queue = process.env.RABBITMQ_QUEUE) => {
+export default async (data, queue) => {
     let channel = await connectToChannel();
     
     await channel.assertQueue(queue, { durable: true });
