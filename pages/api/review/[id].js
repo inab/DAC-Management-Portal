@@ -19,9 +19,9 @@ export default authentication(async function handler(req, res) {
 
   await validateDacInfo('dacs', id, status);
 
-  const message = { source: "dac-management", userEmail: emails.join(","), dacsEmail: emails.join(","), dacId: id };
+  const message = { source: "dac-management", dacsEmail: emails.join(","), dacId: id };
 
-  await sendMessage(JSON.stringify(message));
+  await sendMessage(JSON.stringify(message), process.env.RABBITMQ_QUEUE_USERS);
 
   res.status(200).send(`Status updated successfully: ${id}`)
 });

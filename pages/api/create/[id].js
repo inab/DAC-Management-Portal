@@ -33,7 +33,7 @@ export default authentication(async function handler(req, res) {
 
   const message = { source: "dac-management", userEmail: emails.join(","), dacsEmail: emails.join(","), dataset: controlledFiles.join(","), dacId: dacId };
 
-  await sendMessage(JSON.stringify(message));
+  await sendMessage(JSON.stringify(message), process.env.RABBITMQ_QUEUE_DATA);
 
   res.status(200).json({ name: `DAC created successfully: ${id}` })
 });
