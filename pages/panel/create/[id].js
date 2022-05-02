@@ -18,8 +18,8 @@ export default function item(data) {
 
         if (admin.length > 0 && controlledFiles.length > 0) {
             try {
-                await axios.post(`/api/create/${data.id}`, { admin, controlledFiles });
-                alert("DAC created")
+                const response = await axios.post(`/api/create/${data.id}`, { admin, controlledFiles });
+                alert(response.data.alert)
             } catch (e) {
                 alert(e)
             }
