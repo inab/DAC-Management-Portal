@@ -1,7 +1,7 @@
 import { authentication } from "../../../src/middleware/auth";
 import sendMessage from "../../../src/utils/amqp";
 import { getUserByUsername } from '../../../src/getUsers';
-import { postRoles, postResources, postMembers, generateIds, updateIds } from '../../../src/services/helpers';
+import { generateIds, createTransaction } from '../../../src/services/helpers';
 
 export default authentication(async function handler(req, res) {
   const { id } = req.query;
@@ -17,23 +17,17 @@ export default authentication(async function handler(req, res) {
 
   const emails = users.flat().map(el => el.email)
 
-  await Promise.all(users.flat().map(async (userInfo) => {
-    await postRoles('userRoles', userInfo.id, role);
-  }))
+  const collections = ["dacs", "userRoles"]
 
-  await Promise.all(controlledResourcesURN.map(async (resource) => {
-    await postResources('dacs', dacId, resource) })
-  );
+  let transaction = await createTransaction(collections, users.flat(), dacId, role, controlledResourcesURN)
 
-  await Promise.all(users.flat().map(async (userInfo) => {
-    await postMembers('dacs', dacId, userInfo.id) })
-  );
-
-  await updateIds('dacs', dacId);
+  if(transaction.response === false) {
+    res.json({ alert: `Error during the creation of the DAC. Please go to manage resources/roles section and check if the DAC already existed`})
+  }
 
   const message = { source: "dac-management", userEmail: emails.join(","), dacsEmail: emails.join(","), dataset: controlledFiles.join(","), dacId: dacId };
 
   await sendMessage(JSON.stringify(message), process.env.RABBITMQ_QUEUE_DATA);
 
-  res.status(200).json({ name: `DAC created successfully: ${id}` })
+  res.status(200).json({ alert: `DAC created successfully: ${id}` })
 });
