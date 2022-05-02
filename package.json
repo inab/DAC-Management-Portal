@@ -16,7 +16,7 @@
     "cookie": "^0.4.2",
     "jsonwebtoken": "^8.5.1",
     "keycloak-admin": "^1.14.17",
-    "mongodb": "^3.6.2",
+    "mongodb": "^4.5.0",
     "multiselect-react-dropdown": "^2.0.21",
     "next": "12.1.0",
     "next-auth": "^4.3.0",
