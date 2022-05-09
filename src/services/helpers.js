@@ -66,6 +66,62 @@ const createTransaction = async (collections, users, dacId, role, resources, gro
 
 }
 
+
+const rolesTransaction = async (collections, roles, dacId, usersToDelete, currentUsers, currentAdmins, currentMembers) => {
+    const client = await clientPromise;
+    let session = await client.startSession();
+    let isCompleted = false;
+
+    try {
+        session.startTransaction();
+        // console.log(session.transaction.state)
+
+        // A. Delete roles/memberships.
+        if (usersToDelete.length > 0) {
+            const firstResponse = await updateMembers(collections[0], dacId, currentUsers, session);
+            if (firstResponse.modifiedCount === 0) {
+                throw new Error("Error: Unsuccessful former members deletion.")
+            }
+
+            const secondResponse = await Promise.all(usersToDelete.map(async (uid) => {
+                return await deleteRoles(collections[1], uid, roles[0], roles[1], session);
+            }));
+            if (secondResponse.length === 0) {
+                throw new Error("Error: Unsuccessful roles deletion.")
+            }
+        }
+
+        // B. Update roles: 2 cases -> current dac-admins and dac-members
+        const thirdResponse = await Promise.all(currentAdmins.map(async (uid) => {
+            return await updateRoles(collections[1], uid, roles[0], roles[1], session)
+        }));
+
+        const fourthResponse = await Promise.all(currentMembers.map(async (uid) => {
+            console.log("current members")
+            console.log(currentMembers)
+            return await updateRoles(collections[1], uid, roles[1], roles[0], session)
+        }))
+
+        await session.commitTransaction();
+        // console.log(session.transaction.state)
+
+    } catch (e) {
+        await session.abortTransaction();
+        // console.log(session.transaction.state)
+        console.error(e)
+        return { response: false };
+    } finally {
+        if (session.transaction.state === "TRANSACTION_COMMITTED") {
+            isCompleted = true;
+        } else {
+            isCompleted = false;
+        }
+        await session.endSession();
+        await client.close();
+        return { response: isCompleted };
+    }
+}
+
 const postRoles = async (col, userId, role, session) => {
     const db = await connectToDACdb();
     const response = await db.collection(col).updateOne(
@@ -105,6 +161,69 @@ const postMembers = async (col, dacId, userId, session) => {
             }
         },
         { new: true, upsert: true, session: session })
+    return response
+}
+
+const updateMembers = async (col, dacId, members, session) => {
+    const db = await connectToDACdb();
+    const response = await db.collection(col).updateOne(
+        { 'dacId': dacId },
+        { $set: { "members": members } },
+        { new: true, session: session })
+    return response
+}
+
+const updateRoles = async (col, userId, roleToAdd, roleToDelete, session) => {
+    const db = await connectToDACdb();
+    const response = await db.collection(col).updateOne({ 'sub': userId },
+        [{
+            $set:
+            {
+                roles:
+                {
+                    $function:
+                    {
+                        'body': `function(roleToAdd, roleToDelete, roles) { 
+                                    included = roles.includes(roleToAdd); 
+                                    if(!included) { 
+                                        roles.push(roleToAdd) 
+                                    }; 
+                                    filter = roles.filter(el => el !== roleToDelete);  
+                                    return filter;
+                                }`,
+                        'args': [roleToAdd, roleToDelete, "$roles"],
+                        'lang': 'js'
+                    }
+                }
+            }
+        }], { session: session }
+    );
+
+    return response
+}
+
+const deleteRoles = async (col, userId, adminRole, memberRole, session) => {
+    const db = await connectToDACdb();
+    const response = await db.collection(col).updateOne({ 'sub': userId },
+        [{
+            $set:
+            {
+                roles:
+                {
+                    $function:
+                    {
+                        'body': `function(adminRole, memberRole, roles) { 
+                                    filter = roles.filter(el => el !== adminRole && el !== memberRole);  
+                                    return filter;
+                                }`,
+                        'args': [adminRole, memberRole, "$roles"],
+                        'lang': 'js'
+                    }
+                }
+            }
+        }], { session: session }
+    );
+
     return response
 }
 
@@ -211,5 +330,9 @@ export {
     validateDacInfo,
     getRoles,
     getMembers,
-    createTransaction
+    createTransaction,
+    updateRoles,
+    deleteRoles,
+    updateMembers,
+    rolesTransaction
 };
