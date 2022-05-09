@@ -151,6 +151,20 @@ const postResources = async (col, dacId, resource, session) => {
     return response
 }
 
+const updateResources = async (col, dacId, resources) => {
+    const db = await connectToDACdb();
+
+    const response = await db.collection(col).updateOne(
+        { 'dacId': dacId },
+        {
+            $set: {
+                'files': resources
+            }
+        },
+        { new: true })
+    return response
+}
+
 const postMembers = async (col, dacId, userId, session) => {
     const db = await connectToDACdb();
     const response = await db.collection(col).updateOne(
@@ -262,6 +276,13 @@ const getMembers = async (col, dacId) => {
     return members
 }
 
+const getResources = async (col, dacId) => {
+    const db = await connectToDACdb();
+    const data = await db.collection(col).find({ 'dacId': dacId }).toArray()
+    const { files } = { ...data[0] }
+    return files
+}
+
 const generateIds = async (col) => {
     const db = await connectToMgtdb();
     const docs = await db.collection(col).find().toArray()
@@ -330,9 +351,11 @@ export {
     validateDacInfo,
     getRoles,
     getMembers,
+    getResources,
     createTransaction,
     updateRoles,
     deleteRoles,
     updateMembers,
-    rolesTransaction
+    rolesTransaction,
+    updateResources
 };
