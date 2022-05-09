@@ -32,4 +32,9 @@ const getUserById = async (id) => {
     return await kcClient.users.findOne({id: id})
 }
 
-export { getUsers, getUserByUsername, getUserById }
+const getUserIdFromUsername = async(username) => {
+    let { id } = (await getUserByUsername(username))[0]
+    return id
+  }
+
+export { getUsers, getUserByUsername, getUserById, getUserIdFromUsername }
