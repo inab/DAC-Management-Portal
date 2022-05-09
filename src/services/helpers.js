@@ -180,6 +180,24 @@ const getIds = async (col) => {
     return response
 }
 
+const getGroups = async (col) => {
+    const db = await connectToMgtdb();
+    const docs = await db.collection(col).find().toArray()
+    const { ids } = { ...docs[0] }
+    const response = ids.map(el => el.group)
+    return response
+}
+
+const getGroupsAndIds = async (col) => {
+    const db = await connectToMgtdb();
+    const docs = await db.collection(col).find().toArray()
+    const { ids } = { ...docs[0] }
+    const response = ids.map(el => {
+        return { "group": el.group, "id": el.id }
+    })
+    return response
+}
+
 export {
     postRoles,
     postResources,
@@ -187,6 +205,8 @@ export {
     generateIds,
     updateIds,
     getIds,
+    getGroups,
+    getGroupsAndIds,
     getDacInfo,
     validateDacInfo,
     getRoles,
