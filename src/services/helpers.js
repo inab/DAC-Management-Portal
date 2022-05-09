@@ -10,7 +10,7 @@ const connectToMgtdb = async () => {
     return await client.db("dac-management");
 }
 
-const createTransaction = async (collections, users, dacId, role, resources) => {
+const createTransaction = async (collections, users, dacId, role, resources, group) => {
     const client = await clientPromise;
     let session = await client.startSession();
     let isCompleted = false;
@@ -23,7 +23,7 @@ const createTransaction = async (collections, users, dacId, role, resources) => 
             return await postResources(collections[0], dacId, resource, session)
         }));
 
-        if(firstResponse[0].upsertedCount === 0) {
+        if (firstResponse[0].upsertedCount === 0) {
             throw new Error("Error: Unsuccessful resources addition.")
         }
 
@@ -31,19 +31,19 @@ const createTransaction = async (collections, users, dacId, role, resources) => 
             return await postMembers(collections[0], dacId, userInfo.id, session)
         }));
 
-        if(secondResponse[0].modifiedCount === 0) {
+        if (secondResponse[0].modifiedCount === 0) {
             throw new Error("Error: Unsuccessful members addition.")
         }
-        
+
         const thirdResponse = await Promise.all(users.map(async (userInfo) => {
             return await postRoles(collections[1], userInfo.id, role, session);
         }));
 
-        if(thirdResponse[0].upsertedCount === 0) {
+        if (thirdResponse[0].upsertedCount === 0) {
             throw new Error("Error: Unsuccessful user/s role addition.")
         }
 
-        const fourthResponse = await updateIds(collections[0], dacId, session)
+        const fourthResponse = await updateIds(collections[0], dacId, group, session)
 
         await session.commitTransaction();
         // console.log(session.transaction.state)
@@ -52,18 +52,18 @@ const createTransaction = async (collections, users, dacId, role, resources) => 
         await session.abortTransaction();
         // console.log(session.transaction.state)
         console.error(e)
-        return { response : false };
+        return { response: false };
     } finally {
-        if(session.transaction.state === "TRANSACTION_COMMITTED"){
+        if (session.transaction.state === "TRANSACTION_COMMITTED") {
             isCompleted = true;
         } else {
             isCompleted = false;
         }
         await session.endSession();
         await client.close();
-        return { response : isCompleted };
+        return { response: isCompleted };
     }
-    
+
 }
 
 const postRoles = async (col, userId, role, session) => {
@@ -148,23 +148,26 @@ const generateIds = async (col) => {
     const docs = await db.collection(col).find().toArray()
     const { ids } = { ...docs[0] }
     const largest = ids
-        .map(el => parseInt(el.split('IPC')[1]))
+        .map(el => parseInt(el.id.split('IPC')[1]))
         .reduce((prev, current) => {
             return Math.max(prev, current)
         })
     const zeroes = 11 - largest.toString().length;
     const id = "IPC" + "0".repeat(zeroes) + (largest + 1);
-
     return id
 }
 
-const updateIds = async (col, dacId, session) => {
+const updateIds = async (col, dacId, group, session) => {
     const db = await connectToMgtdb();
     const docs = await db.collection(col).find().toArray()
+    let obj = {
+        "id": dacId,
+        "group": group
+    }
     const { _id } = { ...docs[0] }
     const response = await db.collection(col).updateOne(
         { _id: _id },
-        { $push: { ids: dacId } },
+        { $push: { ids: obj } },
         { session: session })
     return response
 }
@@ -173,9 +176,9 @@ const getIds = async (col) => {
     const db = await connectToMgtdb();
     const docs = await db.collection(col).find().toArray()
     const { ids } = { ...docs[0] }
-    return ids
+    const response = ids.map(el => el.id)
+    return response
 }
-
 
 export {
     postRoles,
