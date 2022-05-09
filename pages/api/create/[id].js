@@ -6,7 +6,7 @@ import { generateIds, createTransaction } from '../../../src/services/helpers';
 export default authentication(async function handler(req, res) {
   const { id } = req.query;
   const { admin, controlledFiles } = req.body;
-
+  console.log("OK")
   const controlledResourcesURN = [].concat.apply([], controlledFiles.map(el => "nc" + ":" + process.env.NEXTCLOUD_DOMAIN + ":" + el))
 
   const dacId = await generateIds("dacs");
@@ -19,7 +19,7 @@ export default authentication(async function handler(req, res) {
 
   const collections = ["dacs", "userRoles"]
 
-  let transaction = await createTransaction(collections, users.flat(), dacId, role, controlledResourcesURN)
+  let transaction = await createTransaction(collections, users.flat(), dacId, role, controlledResourcesURN, id)
 
   if(transaction.response === false) {
     res.json({ alert: `Error during the creation of the DAC. Please go to manage resources/roles section and check if the DAC already existed`})
