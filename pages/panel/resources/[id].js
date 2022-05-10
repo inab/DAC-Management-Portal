@@ -54,6 +54,7 @@ export default function item(data) {
                                 <Multiselect
                                     isObject={false}
                                     onSelect={controlledFilesHandler}
+                                    onRemove={controlledFilesHandler}
                                     options={filesName}
                                     selectedValues={filesName}
                                     showCheckbox
