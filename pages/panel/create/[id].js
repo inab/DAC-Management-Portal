@@ -62,6 +62,7 @@ export default function item(data) {
                                 <Multiselect
                                     isObject={false}
                                     onSelect={adminHandler}
+                                    onRemove={adminHandler}
                                     options={users}
                                     showCheckbox
                                     style={dropdownStyle}
@@ -79,6 +80,7 @@ export default function item(data) {
                                 <Multiselect
                                     isObject={false}
                                     onSelect={controlledFilesHandler}
+                                    onRemove={controlledFilesHandler}
                                     options={filesName}
                                     showCheckbox
                                     style={dropdownStyle}
