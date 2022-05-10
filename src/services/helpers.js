@@ -39,7 +39,7 @@ const createTransaction = async (collections, users, dacId, role, resources, gro
             return await postRoles(collections[1], userInfo.id, role, session);
         }));
 
-        if (thirdResponse[0].upsertedCount === 0) {
+        if (thirdResponse[0].upsertedCount === 0 && thirdResponse[0].modifiedCount === 0) {
             throw new Error("Error: Unsuccessful user/s role addition.")
         }
 
