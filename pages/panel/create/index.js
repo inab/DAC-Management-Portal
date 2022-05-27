@@ -29,7 +29,7 @@ export default function create(data) {
 }
 
 export async function getServerSideProps() {
-  let groups = ["IPC", "CURIE", "R2"]
+  let groups = ["IGTP", "R2", "CURIE", "DREAM", "DEMONSTRATOR"]
 
   return {
     props: {
