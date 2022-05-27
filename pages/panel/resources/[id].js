@@ -44,6 +44,7 @@ export default function item(data) {
         <div class="container">
             <div class="content-wrapper">
                 <div class="row justify-content-center text-center">
+                    <h2> Manage resources - {data.id} </h2>
                     <div class="col-5 m-1">
                         <div class="card">
                             <div class="card-header">
@@ -65,7 +66,7 @@ export default function item(data) {
                     </div>
                 </div> 
                 <div class="row justify-content-center text-center mt-2">
-                    <div class="col-6">
+                    <div class="col-5">
                         <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
                     </div>
                 </div>
