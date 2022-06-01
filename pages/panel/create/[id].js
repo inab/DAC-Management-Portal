@@ -158,7 +158,7 @@ export async function getServerSideProps(context) {
     let submitterAndGroup = [];
 
     submitters.map(el => userIdAndGroups.forEach(it => {
-        if (el.username === it.id) {
+        if (el.username === it.id && it.groups.includes(id)) {
             let selector = it.id;
             submitterAndGroup.push(selector)
         }
