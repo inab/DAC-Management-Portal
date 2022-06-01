@@ -6,8 +6,8 @@ const basicAuthRequest = async (object) => {
         url: process.env.NEXTCLOUD_URL + object.endpoint,
         withCredentials: true,
         auth: {
-            username: process.env.NEXTCLOUD_ADMIN_USER,
-            password: process.env.NEXTCLOUD_ADMIN_PASSWORD
+            username: process.env.NEXTCLOUD_DAC_MANAGER_USER,
+            password: process.env.NEXTCLOUD_DAC_MANAGER_PASSWORD
         },
         data: object.data
     })
