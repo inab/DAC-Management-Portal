@@ -19,7 +19,7 @@ const initKcClient = async () => {
 
 const getUsers = async () => {
     const kcClient = await initKcClient();
-    return await kcClient.users.find()
+    return await kcClient.users.find({max: 1000})
 }
 
 const getUserByUsername = async (id) => {
