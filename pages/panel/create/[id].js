@@ -105,7 +105,7 @@ export async function getServerSideProps(context) {
 
     let filesRequest = {
         method: 'PROPFIND',
-        endpoint: `/remote.php/dav/files/admin/${id}`,
+        endpoint: `/remote.php/dav/files/${process.env.NEXTCLOUD_ADMIN_USER}/${id}`,
         data: `<?xml version="1.0" encoding="UTF-8"?>
                 <d:propfind xmlns:d="DAV:">
                     <d:prop xmlns:oc="http://owncloud.org/ns">
