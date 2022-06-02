@@ -1,7 +1,7 @@
 import { React, useState } from 'react';
 import { basicAuthRequest, basicAuthRequestWithHeaders } from '../../../src/lib/requests';
 import { getUsersMask, applyUsersMask } from '../../../src/lib/filter';
-import parseXml from '../../../src/lib/parseXml';
+import { parseXml } from '../../../src/lib/parseXml';
 import { getUsers } from '../../../src/getUsers';
 import axios from 'axios';
 import Multiselect from "multiselect-react-dropdown";
