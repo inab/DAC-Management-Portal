@@ -21,21 +21,21 @@ export default function Home() {
 
   return <>
     <Head>
-      <title>DAC Management</title>
+      <title>DAC Management Portal</title>
       <meta name="description" content="iPC DAC-Mgt Portal" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <br></br>
-    <h2 class="title"> DAC Management Portal </h2>
-    <br></br>
-    <div class="form">
-      <form onSubmit={(e) => submitHandler(e)} class="login-form">
-        <label> Username </label>
-        <input class="input" type="text" onChange={(e) => setUsername(e.target.value)}/>
-        <label> Password </label>
-        <input class="input" type="password" onChange={(e) => setPassword(e.target.value)}/>
-        <button class="btn"> Log in </button>
-      </form>
+    <div class="login-wrapper">
+      <div class="form">
+        <p class="form-header"> Sign in to your account </p>
+        <form onSubmit={(e) => submitHandler(e)} class="login-form">
+          <label> Username </label>
+          <input class="input" type="text" onChange={(e) => setUsername(e.target.value)} />
+          <label> Password </label>
+          <input class="input" type="password" onChange={(e) => setPassword(e.target.value)} />
+          <button class="btn"> Log in </button>
+        </form>
+      </div>
     </div>
   </>
 }
