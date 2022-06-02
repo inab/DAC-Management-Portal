@@ -20,5 +20,12 @@
   outline: none;
   text-align: center;
   box-sizing: border-box;
-  background: #d6d6d6e8;
+  background: white;
+
+  &:hover {
+    border-color: $color-secondary;
+  }
+  &:focus {
+    border-color: $color-primary;
+  }
 }
