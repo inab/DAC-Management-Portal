@@ -1,34 +1,43 @@
 import React from 'react';
-import Link from 'next/link';
-import { signIn, signOut, useSession } from "next-auth/react";
+import Image from 'next/image'
+import { useRouter } from "next/router";
+import axios from "axios";
+import NavItem from './NavItem';
+import NavRoutes from './Routes';
+import logo from '../assets/img/logo.png';
 
 export default function () {
-  const { data: session} = useSession();
+  const router = useRouter();
+
+  const logoutHandler = async () => {
+    try {
+      const response = await axios.get("/api/auth/logout");
+      alert(response.data.message)
+      router.push("/");
+    } catch (e) {
+      alert(e)
+    }
+  };
+
   return (
-    <nav class="navbar navbar-light navbar-expand-sm">
-        <div class="container-fluid">
-            <Link class="navbar-brand" href="/">
-                <a style={{fontWeight: 'bold', fontSize: 16, cursor: 'pointer', textDecoration: 'none'}}> DAC Management Portal </a>
-            </Link>
-            <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-              <ul class="navbar-nav ml-auto">
-              {session?(<>
-                <Link href="/create"> 
-                  <a style={{fontWeight: 'bold', fontSize: 16, cursor: 'pointer', textDecoration: 'none'}}> Create DACs </a> 
-                </Link>
-                <Link href="/roles"> 
-                  <a style={{fontWeight: 'bold', fontSize: 16, cursor: 'pointer', textDecoration: 'none'}}> DAC roles </a> 
-                </Link>
-                <Link href="/resources"> 
-                  <a style={{fontWeight: 'bold', fontSize: 16, cursor: 'pointer', textDecoration: 'none'}}> DAC resources </a> 
-                </Link>
-                <button onClick={() => signOut()}>Sign out</button></>):
-                (<button onClick={() => signIn()}>Sign in</button>)}
-              </ul>
-            </div>
+    <section class="navigation">
+      <div class="nav-container">
+        <div class="brand">
+          <Image src={logo} width="70" height="70" />
+          <a href="/panel">
+            DAC Management Portal
+          </a>
         </div>
-    </nav>
-)}
+        <nav>
+          <ul class="nav-list">
+            {NavRoutes.map((menu, idx) => (
+              <NavItem {...menu} />
+            ))}
+            <li><a onClick={() => logoutHandler()}> Logout </a></li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+  )
+}
