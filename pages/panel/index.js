@@ -1,20 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import axios from "axios";
-import { useRouter } from "next/router";
 
 export default function Panel() {
-    const router = useRouter();
-
-    const logoutHandler = async () => {
-        try {
-            const response = await axios.get("/api/auth/logout");
-            alert(response.data.message)
-            router.push("/");
-        } catch (e) {
-            alert(e)
-        }
-    };
 
     return <>
         <div>
@@ -23,10 +10,6 @@ export default function Panel() {
                 <meta name="description" content="iPC DAC-Mgt Portal" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
-            <div style={{ float: 'right' }}>
-                <button onClick={() => logoutHandler()}> Logout </button>
-            </div>
 
             <main class="main">
                 <h2 class="title">
