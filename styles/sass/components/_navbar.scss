@@ -1,0 +1,64 @@
+.navigation {
+  height: $nav-height;
+  background: $nav-background;
+}
+
+.nav-container {
+  max-width: $content-width;
+  margin: 0 auto;
+}
+
+.brand {
+  position: absolute;
+  padding-left: 20px;
+  float: left;
+  line-height: $nav-height;
+  text-transform: uppercase;
+  font-size: 1.4em;
+  display: inline-flex;
+
+  a,
+  a:visited {
+    color: $nav-font-color;
+    text-decoration: none;
+  }
+}
+
+nav {
+  float: right;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+      float: left;
+      position: relative;
+      a {
+        display: block;
+        padding: 10px 20px 0 20px;
+        line-height: 50px;
+        background: $nav-background;
+        color: $nav-font-color;
+        text-decoration: none;
+
+        &::before {
+          transition: 250ms;
+          height: 5px;
+          content: "";
+          position: absolute;
+          background-color: $link-hover-color;
+          width: 0%;
+          bottom: 0px;
+        }
+
+        &:hover {
+            color: $nav-font-color;
+        }
+
+        &:hover::before {
+          width: 70%;
+        }
+      } 
+    }
+  }
+}
