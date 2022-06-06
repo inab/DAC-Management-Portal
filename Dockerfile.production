@@ -1,0 +1,11 @@
+FROM node:16-alpine
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install -timeout=9999999
+
+RUN npm run build
+
+CMD ["npm", "run", "start"]
