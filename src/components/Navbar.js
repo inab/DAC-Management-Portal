@@ -1,12 +1,13 @@
 import React from 'react';
-import Image from 'next/image'
+import Image from 'next/image';
+import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import NavItem from './NavItem';
 import NavRoutes from './Routes';
 import logo from '../assets/img/logo.png';
 
-export default function () {
+export default function Navbar() {
   const router = useRouter();
 
   const logoutHandler = async () => {
@@ -20,18 +21,18 @@ export default function () {
   };
 
   return (
-    <section class="navigation">
-      <div class="nav-container">
-        <div class="brand">
-          <Image src={logo} width="70" height="70" />
-          <a href="/panel">
+    <section className="navigation">
+      <div className="nav-container">
+        <div className="brand">
+          <Image src={logo} width="70" height="70" alt="logo" />
+          <Link href="/panel">
             DAC Management Portal
-          </a>
+          </Link>
         </div>
         <nav>
-          <ul class="nav-list">
+          <ul className="nav-list">
             {NavRoutes.map((menu, idx) => (
-              <NavItem {...menu} />
+              <NavItem {...menu} key={idx} />
             ))}
             <li><a onClick={() => logoutHandler()}> Logout </a></li>
           </ul>

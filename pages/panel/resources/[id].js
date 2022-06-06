@@ -1,11 +1,11 @@
 import { React, useState } from 'react';
 import { basicAuthRequest } from '../../../src/lib/requests';
 import { getGroupsAndIds } from '../../../src/services/helpers';
-import parseXml from '../../../src/lib/parseXml';
+import { parseXml } from '../../../src/lib/parseXml';
 import Multiselect from "multiselect-react-dropdown";
 import axios from 'axios';
 
-export default function item(data) {
+export default function Item(data) {
     const [files, setFiles] = useState(data.fileIds);
     const [filesName, setFilesName] = useState(data.filesName);
     const [controlledFiles, setControlledFiles] = useState(data.fileIds);
@@ -41,17 +41,17 @@ export default function item(data) {
     };
 
     return (
-        <div class="container">
-            <div class="content-wrapper">
-                <div class="row justify-content-center text-center">
+        <div className="container">
+            <div className="content-wrapper">
+                <div className="row justify-content-center text-center">
                     <h2> Manage resources - {data.id} </h2>
-                    <div class="col-5 m-1">
-                        <div class="card">
-                            <div class="card-header">
+                    <div className="col-5 m-1">
+                        <div className="card">
+                            <div className="card-header">
                                 Resources
                             </div>
-                            <div class="card-body">
-                                <p class="card-text"> Select resources for this DAC </p>
+                            <div className="card-body">
+                                <p className="card-text"> Select resources for this DAC </p>
                                 <Multiselect
                                     isObject={false}
                                     onSelect={controlledFilesHandler}
@@ -65,9 +65,9 @@ export default function item(data) {
                         </div>
                     </div>
                 </div> 
-                <div class="row justify-content-center text-center mt-2">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
+                <div className="row justify-content-center text-center mt-2">
+                    <div className="col-5">
+                        <button type="button" className="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
                     </div>
                 </div>
             </div>

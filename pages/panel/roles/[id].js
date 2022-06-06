@@ -4,7 +4,7 @@ import { getMembers, getRoles } from '../../../src/services/helpers';
 import { getUserById } from '../../../src/getUsers';
 import axios from 'axios';
 
-export default function item(data) {
+export default function Item(data) {
     const [all, setAll] = useState(data.allNames);
     const [users, setUsers] = useState({ admin: data.adminNames, member: data.memberNames })
 
@@ -43,17 +43,17 @@ export default function item(data) {
     };
 
     return (
-        <div class="container">
-            <div class="content-wrapper">
-                <div class="row justify-content-center text-center">
+        <div className="container">
+            <div className="content-wrapper">
+                <div className="row justify-content-center text-center">
                     <h2> Manage roles - {data.id} </h2>
-                    <div class="col-5 m-1">
-                        <div class="card">
-                            <div class="card-header">
+                    <div className="col-5 m-1">
+                        <div className="card">
+                            <div className="card-header">
                                 Roles
                             </div>
-                            <div class="card-body">
-                                <p class="card-text"> Select DAC admin/s </p>
+                            <div className="card-body">
+                                <p className="card-text"> Select DAC admin/s </p>
                                 <Multiselect
                                     isObject={false}
                                     onSelect={adminHandler}
@@ -66,13 +66,13 @@ export default function item(data) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-5 m-1">
-                        <div class="card">
-                            <div class="card-header">
+                    <div className="col-5 m-1">
+                        <div className="card">
+                            <div className="card-header">
                                 Roles
                             </div>
-                            <div class="card-body">
-                                <p class="card-text"> Select DAC member/s </p>
+                            <div className="card-body">
+                                <p className="card-text"> Select DAC member/s </p>
                                 <Multiselect
                                     isObject={false}
                                     onSelect={memberHandler}
@@ -86,9 +86,9 @@ export default function item(data) {
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-center text-center mt-2">
-                    <div class="col-6">
-                        <button type="button" class="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
+                <div className="row justify-content-center text-center mt-2">
+                    <div className="col-6">
+                        <button type="button" className="btn btn-success w-100" onClick={(e) => submitHandler(e)}> Send </button>
                     </div>
                 </div>
             </div>
