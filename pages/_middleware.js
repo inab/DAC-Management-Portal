@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verify } from "jsonwebtoken";
+import * as jose from 'jose';
 
-export default function middleware(req) {
+export default async function middleware(req) {
     const { cookies } = req;
 
     const path = req.nextUrl.pathname;
@@ -9,20 +9,20 @@ export default function middleware(req) {
     if(path === "/") {
         if(cookies.token) {
             try {
-                verify(cookies.token, process.env.SECRET);
+                await jose.jwtVerify(cookies.token, new TextEncoder().encode(process.env.SECRET))
                 return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL + "/panel");
             } catch(e) {
                 return NextResponse.next();
             }
         }
     }
-
+    
     if(path.includes("/panel")) {
         if(cookies.token === undefined) {
             return NextResponse.redirect(process.env.NEXT_PUBLIC_FRONTEND_URL);
         }
         try {
-            verify(cookies.token, process.env.SECRET);
+            await jose.jwtVerify(cookies.token, new TextEncoder().encode(process.env.SECRET))
             return NextResponse.next();
         } catch(e) {
             return NextResponse.rewrite(process.env.NEXT_PUBLIC_FRONTEND_URL);
@@ -35,4 +35,5 @@ export default function middleware(req) {
         }
         return NextResponse.next()
     }
+
 }
