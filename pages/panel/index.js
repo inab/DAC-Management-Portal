@@ -28,8 +28,8 @@ export default function Panel() {
                                             <div className="card-body text-white">
                                                 <h2 className="card-title"> Review DACs </h2>
                                                 <p className="card-text"> Validate DAC info supplied by the DAC-admins.  </p>
-                                                <div style={{ float: "right" }}>
-                                                    <FontAwesomeIcon icon={faChalkboardUser} style={{ width: "45px" }} />
+                                                <div className="card-icon">
+                                                    <FontAwesomeIcon icon={faChalkboardUser} />
                                                 </div>
                                             </div>
                                         </a>
@@ -43,8 +43,8 @@ export default function Panel() {
                                             <div className="card-body text-white">
                                                 <h2 className="card-title"> Create a DAC </h2>
                                                 <p className="card-text"> Link users with resources and generate new DACs. </p>
-                                                <div style={{ float: "right" }}>
-                                                    <FontAwesomeIcon icon={faUsersRectangle} style={{ width: "45px" }} />
+                                                <div className="card-icon">
+                                                    <FontAwesomeIcon icon={faUsersRectangle} />
                                                 </div>
                                             </div>
                                         </a>
@@ -60,8 +60,8 @@ export default function Panel() {
                                             <div className="card-body text-white">
                                                 <h2 className="card-title"> Manage DAC roles </h2>
                                                 <p className="card-text"> Manage roles from existing DACs.</p>
-                                                <div style={{ float: "right" }}>
-                                                    <FontAwesomeIcon icon={faUserShield} style={{ width: "45px" }} />
+                                                <div className="card-icon">
+                                                    <FontAwesomeIcon icon={faUserShield} />
                                                 </div>
                                             </div>
                                         </a>
@@ -75,8 +75,8 @@ export default function Panel() {
                                             <div className="card-body text-white">
                                                 <h2 className="card-title"> Manage Resources </h2>
                                                 <p className="card-text"> Manage resources allocated to the DACs.  </p>
-                                                <div style={{ float: "right" }}>
-                                                    <FontAwesomeIcon icon={faFileCircleExclamation} style={{ width: "45px" }} />
+                                                <div className="card-icon">
+                                                    <FontAwesomeIcon icon={faFileCircleExclamation} />
                                                 </div>
                                             </div>
                                         </a>
