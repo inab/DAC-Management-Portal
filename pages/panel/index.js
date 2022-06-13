@@ -1,93 +1,47 @@
 import Head from 'next/head';
-import Link from 'next/link';
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsersRectangle, faUserShield, faChalkboardUser, faFileCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import * as icons from '@fortawesome/free-solid-svg-icons';
+import Menu from './menu';
 
 export default function Panel() {
+    const router = useRouter();
 
     return <>
-        <div>
-            <Head>
-                <title>DAC Management</title>
-                <meta name="description" content="iPC DAC-Mgt Portal" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
+        <Head>
+            <title>DAC Management</title>
+            <meta name="description" content="iPC DAC-Mgt Portal" />
+            <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-            <main className="main">
-                <div className="row h-100">
-                    <div className="col-4 h-75 my-auto">
-                        <h2 className="card-title"> Main panel </h2>
-                        <h4 className="card-text mb-2 text-muted"> Administrate the iPC Data Access Committees </h4>
-                    </div>
-                    <div className="col-8 h-50 my-auto">
-                        <div className="row h-75">
-                            <div className="col-6 d-flex align-items-stretch p-2">
-                                <div className="card text-white bg-primary w-100">
-                                    <Link href="/panel/review">
-                                        <a>
-                                            <div className="card-body text-white">
-                                                <h2 className="card-title"> Review DACs </h2>
-                                                <p className="card-text"> Validate DAC info supplied by the DAC-admins.  </p>
-                                                <div className="card-icon">
-                                                    <FontAwesomeIcon icon={faChalkboardUser} />
-                                                </div>
+        <main className="main">
+            <div className="row h-100">
+                <div className="col-4 h-75 my-auto">
+                    <h2 className="card-title"> Main panel </h2>
+                    <h4 className="card-text mb-2 text-muted"> Administrate the iPC Data Access Committees </h4>
+                </div>
+                <div className="col-8 h-50 my-auto">
+                    <div className="row h-75">
+                        {Menu.map((element, idx) => (
+                            <>
+                                <div className="col-6 d-flex align-items-stretch p-2" onClick={() => router.push(element.href)}>
+                                    <div className={"card text-white w-100 " + element.color}>
+                                        <div className="card-body text-white">
+                                            <h2 className="card-title"> {element.title} </h2>
+                                            <p className="card-text"> {element.description} </p>
+                                            <br></br>
+                                            <div className="card-icon">
+                                                <FontAwesomeIcon icon={icons[element.icon]} />
                                             </div>
-                                        </a>
-                                    </Link>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-6 d-flex align-items-stretch p-2">
-                                <div className="card text-white bg-success w-100">
-                                    <Link href="/panel/create">
-                                        <a>
-                                            <div className="card-body text-white">
-                                                <h2 className="card-title"> Create a DAC </h2>
-                                                <p className="card-text"> Link users with resources and generate new DACs. </p>
-                                                <div className="card-icon">
-                                                    <FontAwesomeIcon icon={faUsersRectangle} />
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row h-75">
-                            <div className="col-6 d-flex align-items-stretch p-2">
-                                <div className="card text-dark bg-warning w-100">
-                                    <Link href="/panel/roles">
-                                        <a>
-                                            <div className="card-body text-white">
-                                                <h2 className="card-title"> Manage DAC roles </h2>
-                                                <p className="card-text"> Manage roles from existing DACs.</p>
-                                                <div className="card-icon">
-                                                    <FontAwesomeIcon icon={faUserShield} />
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="col-6 d-flex align-items-stretch p-2">
-                                <div className="card text-white bg-danger w-100">
-                                    <Link href="/panel/resources">
-                                        <a>
-                                            <div className="card-body text-white">
-                                                <h2 className="card-title"> Manage Resources </h2>
-                                                <p className="card-text"> Manage resources allocated to the DACs.  </p>
-                                                <div className="card-icon">
-                                                    <FontAwesomeIcon icon={faFileCircleExclamation} />
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
+                            </>
+                        ))}
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
     </>
 }
 
