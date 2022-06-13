@@ -1,28 +1,9 @@
-.card-panel {
-    font-family: $font-family;
-    margin: 0.25rem;
-    padding: 1.5rem;
-    text-align: left;
-    color: black;
-    text-decoration: none;
-    border: 1px solid $color-secondary;
-    border-radius: 15px;
-    max-width: 300px;
-  }
-  
-  .card-panel:hover {
-    color: $color-primary;
-    border-color: $color-primary;
-  }
-  
-  .card-panel h2 {
-    margin: 0 0 1rem 0;
-    font-size: 1.5rem;
-  }
-  
-  .card-panel p {
-    margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.5;
-  }
-  
+.card{
+  border-radius: 4px;
+  transition: transform .5s cubic-bezier(.155,1.105,.295,1.12);
+  cursor: pointer;
+}
+
+.card:hover{
+  transform: scale(1.05);
+}

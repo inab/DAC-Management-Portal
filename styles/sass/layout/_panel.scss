@@ -1,29 +1,4 @@
 .main {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
-}
-
-.panel-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 375px;
-  margin: 5px;
-  border: gray 1px solid;
-  border-radius: 15px;
-
-  p {
-    margin: 15px;
-  }
+  height: 80vh;
+  margin: 32px;
 }
