@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as icons from '@fortawesome/free-solid-svg-icons';
-import Menu from './menu';
+import Menu from '../../src/menu';
 
 export default function Panel() {
     const router = useRouter();
