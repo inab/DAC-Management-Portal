@@ -1,6 +1,7 @@
 @import '/node_modules/bootstrap/scss/bootstrap.scss';
 @import 'core/_reset.scss';
 @import 'abstracts/_variables.scss';
+@import './global.scss';
 @import 'abstracts/_mixins.scss';
 @import 'components/_cards.scss';
 @import 'components/_navbar.scss';
