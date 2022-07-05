@@ -14,7 +14,7 @@
   float: left;
   line-height: $nav-height;
   text-transform: uppercase;
-  font-size: 1.4em;
+  font-size: font-size(font-size-medium);
   display: inline-flex;
 
   a,
@@ -60,5 +60,14 @@ nav {
         }
       } 
     }
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .nav-container {
+    max-width: $content-width-xl
+  }
+  .brand {
+    font-size: font-size(font-size-large);
   }
 }

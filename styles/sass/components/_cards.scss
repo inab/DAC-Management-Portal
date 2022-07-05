@@ -12,3 +12,13 @@
   float: right;
   width: 45px;
 }
+
+@media only screen and (min-width: 1280px) {
+  .card {
+    min-height: 300px;
+  }
+  .card-icon {
+    padding-top: 75px;
+    width: 90px;
+  }
+}
