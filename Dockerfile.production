@@ -8,4 +8,4 @@ RUN npm install -timeout=9999999
 
 RUN npm run build
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start-prod"]

@@ -6,6 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
+    "start-prod": "NEXT_PUBLIC_APP_ENV=prod next start",
     "lint": "next lint"
   },
   "dependencies": {
