@@ -24,13 +24,12 @@ export default function Panel() {
                     <div className="row h-75">
                         {Menu.map((element, idx) => (
                             <>
-                                <div className="col-6 d-flex align-items-stretch p-2" onClick={() => router.push(element.href)}>
-                                    <div className={"card text-white w-100 " + element.color}>
-                                        <div className="card-body text-white">
-                                            <h2 className="card-title"> {element.title} </h2>
+                                <div className="col-6 p-2" onClick={() => router.push(element.href)}>
+                                    <div className={"card w-100 h-100 " + element.color}>
+                                        <div className="card-body text-white d-flex flex-column">
+                                            <p className="card-title"> {element.title} </p>
                                             <p className="card-text"> {element.description} </p>
-                                            <br></br>
-                                            <div className="card-icon">
+                                            <div className="card-icon mt-auto align-self-end">
                                                 <FontAwesomeIcon icon={icons[element.icon]} />
                                             </div>
                                         </div>
