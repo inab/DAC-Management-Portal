@@ -1,4 +1,5 @@
 .card{
+  min-height: 175px;
   border-radius: 4px;
   transition: transform .5s cubic-bezier(.155,1.105,.295,1.12);
   cursor: pointer;
@@ -9,16 +10,33 @@
 }
 
 .card-icon {
-  float: right;
   width: 45px;
 }
 
-@media only screen and (min-width: 1280px) {
+.card-title {
+  font-size: font-size(font-size-large);
+}
+
+@media only screen and (min-height: 720px) and (max-height: 920px) {
   .card {
-    min-height: 300px;
+    min-height: 225px;
   }
   .card-icon {
-    padding-top: 75px;
-    width: 90px;
+    width: 50px;
+  }
+}
+
+@media only screen and (min-height: 920px) {
+  .card {
+    min-height: 275px;
+  }
+  .card-title {
+    font-size: font-size(font-size-xlarge);
+  }
+  .card-text {
+    font-size: font-size(font-size-large);
+  }
+  .card-icon {
+    width: 75px;
   }
 }
