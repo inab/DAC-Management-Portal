@@ -1,34 +1,30 @@
 import { authentication } from "../../../src/middleware/auth";
-import { getResources, updateResources } from '../../../src/services/helpers';
+import { resourcesTransaction } from '../../../src/services/helpers';
+import { v4 as uuidv4 } from 'uuid';
 
 export default authentication(async function handler(req, res) {
     const { id } = req.query;
     const { controlledFiles } = req.body;
 
-    const previousResources = await getResources("dacs", id);
+    const resourcesURN = [].concat.apply([], controlledFiles.map(el => "nc" + ":" + process.env.NEXTCLOUD_DOMAIN + ":" + el))
 
-    const resourcesIds = previousResources.map(el => el.fileId);
-
-    const filesToAdd = controlledFiles.filter(el => !resourcesIds.includes(el))
-
-    const controlledResourcesURN = [].concat.apply([], filesToAdd.map(el => "nc" + ":" + process.env.NEXTCLOUD_DOMAIN + ":" + el))
-
-    const resourcesToAdd = filesToAdd.map((el, idx) => {
+    // Generate the domain object.
+    const resources = controlledFiles.map((el, idx) => {
         return {
+            _id: uuidv4(),
             fileId: el,
             policy: "",
-            acl: id + ":" + controlledResourcesURN[idx]
+            acl: id + ":" + resourcesURN[idx]
         }
     })
 
-    const resourcesToMantain = previousResources.map(el => el)
-                                                .filter(el2 => controlledFiles.includes(el2.fileId))
+    const collections = ["dacs", "policies"];
 
-    const updatedResources = [...resourcesToMantain, ...resourcesToAdd];
+    const transaction = await resourcesTransaction(collections, id, resources)
 
-    const response = updateResources("dacs", id, updatedResources)
-
-    //console.log(response)
+    if(transaction.response === false) {
+        res.json({ alert: `Error during the management of the DAC resources.`})
+      }
 
     res.status(200).json({ alert: `DAC resources updated successfully: ${id}` })
 });
