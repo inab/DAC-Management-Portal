@@ -66,7 +66,6 @@ const createTransaction = async (collections, users, dacId, role, resources, gro
 
 }
 
-
 const rolesTransaction = async (collections, roles, dacId, usersToDelete, currentUsers, currentAdmins, currentMembers) => {
     const client = await clientPromise;
     let session = await client.startSession();
@@ -97,8 +96,6 @@ const rolesTransaction = async (collections, roles, dacId, usersToDelete, curren
         }));
 
         const fourthResponse = await Promise.all(currentMembers.map(async (uid) => {
-            console.log("current members")
-            console.log(currentMembers)
             return await updateRoles(collections[1], uid, roles[1], roles[0], session)
         }))
 
@@ -108,6 +105,44 @@ const rolesTransaction = async (collections, roles, dacId, usersToDelete, curren
     } catch (e) {
         await session.abortTransaction();
         // console.log(session.transaction.state)
+        console.error(e)
+        return { response: false };
+    } finally {
+        if (session.transaction.state === "TRANSACTION_COMMITTED") {
+            isCompleted = true;
+        } else {
+            isCompleted = false;
+        }
+        await session.endSession();
+        await client.close();
+        return { response: isCompleted };
+    }
+}
+
+
+const resourcesTransaction = async (collections, dacId, resources) => {
+    const client = await clientPromise;
+    let session = await client.startSession();
+    let isCompleted = false;
+
+    try {
+        session.startTransaction();
+
+        // A. Adding policies domain objects.
+        const firstResponse = await addResourcesToPolicies(collections[1], dacId, resources, session);
+        if (firstResponse.insertedCount === 0) {
+            throw new Error("Error: No resources have been modified.")
+        }
+
+        const secondResponse = await addResourcesToDAC(collections[0], dacId, resources, session);
+        if (secondResponse.modifiedCount === 0) {
+            throw new Error("Error: No resources Ids have been added to the DAC.")
+        }
+
+        await session.commitTransaction();
+
+    } catch (e) {
+        await session.abortTransaction();
         console.error(e)
         return { response: false };
     } finally {
@@ -163,6 +198,33 @@ const updateResources = async (col, dacId, resources) => {
         },
         { new: true })
     return response
+}
+
+const addResourcesToDAC = async (col, dacId, resources, session) => {
+    const db = await connectToDACdb();
+
+    const ids = resources.map(item => item._id)
+
+    const response = await db.collection(col).updateOne(
+        { 'dacId': dacId },
+        {
+            $set: {
+                'policies': ids
+            }
+        },
+        { new: true, session: session })
+    return response
+}
+
+const addResourcesToPolicies = async (col, dacId, resources, session) => {
+    const db = await connectToDACdb();
+
+    const ids = await getResources("dacs", dacId);
+
+    const deleteResponse = await db.collection(col).deleteMany({ _id: { $in: ids } }, { session: session });
+    const insertResponse = await db.collection(col).insertMany(resources, { session: session });
+
+    return insertResponse
 }
 
 const postMembers = async (col, dacId, userId, session) => {
@@ -279,8 +341,15 @@ const getMembers = async (col, dacId) => {
 const getResources = async (col, dacId) => {
     const db = await connectToDACdb();
     const data = await db.collection(col).find({ 'dacId': dacId }).toArray()
-    const { files } = { ...data[0] }
-    return files
+    const { policies } = { ...data[0] }
+    return policies
+}
+
+const getResourceFromUUID = async (col, uuid) => {
+    const db = await connectToDACdb();
+    const data = await db.collection(col).find({ '_id': uuid }).toArray()
+    const resource = { ...data[0] }
+    return resource
 }
 
 const generateIds = async (col) => {
@@ -356,6 +425,7 @@ export {
     updateRoles,
     deleteRoles,
     updateMembers,
+    resourcesTransaction,
     rolesTransaction,
     updateResources
 };
