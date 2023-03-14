@@ -13,7 +13,7 @@ export default authentication(async function handler(req, res) {
         return {
             _id: uuidv4(),
             fileId: el,
-            policy: "",
+            value: "",
             acl: id + ":" + resourcesURN[idx]
         }
     })
