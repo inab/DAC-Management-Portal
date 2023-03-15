@@ -10,40 +10,35 @@ const connectToMgtdb = async () => {
     return await client.db("dac-management");
 }
 
-const createTransaction = async (collections, users, dacId, role, resources, group) => {
+const createTransaction = async (collections, dacs, resources, roles, group) => {
     const client = await clientPromise;
     let session = await client.startSession();
     let isCompleted = false;
-
+    
     try {
         session.startTransaction();
-        // console.log(session.transaction.state)
+        
+        const firstResponse = await addResourcesToPolicies(collections[1], dacs.dacId, resources, session);
 
-        const firstResponse = await Promise.all(resources.map(async (resource) => {
-            return await postResources(collections[0], dacId, resource, session)
-        }));
-
-        if (firstResponse[0].upsertedCount === 0) {
+        if (firstResponse.insertedCount === 0) {
             throw new Error("Error: Unsuccessful resources addition.")
         }
 
-        const secondResponse = await Promise.all(users.map(async (userInfo) => {
-            return await postMembers(collections[0], dacId, userInfo.id, session)
+        const secondResponse = await Promise.all(roles.map(async (item) => {
+            return await postRoles(collections[2], item.sub, item.roles[0], session);
         }));
 
         if (secondResponse[0].modifiedCount === 0) {
-            throw new Error("Error: Unsuccessful members addition.")
+            throw new Error("Error: Unsuccessful roles addition.")
         }
 
-        const thirdResponse = await Promise.all(users.map(async (userInfo) => {
-            return await postRoles(collections[1], userInfo.id, role, session);
-        }));
+        const thirdResponse = await addDACToDACS(collections[0], dacs, session)        
 
-        if (thirdResponse[0].upsertedCount === 0 && thirdResponse[0].modifiedCount === 0) {
-            throw new Error("Error: Unsuccessful user/s role addition.")
+        if (thirdResponse.insertedId === null) {
+            throw new Error("Error: Unsuccessful DAC addition.")
         }
 
-        const fourthResponse = await updateIds(collections[0], dacId, group, session)
+        const fourthResponse = await updateIds(collections[0], dacs.dacId, group, session)
 
         await session.commitTransaction();
         // console.log(session.transaction.state)
@@ -63,7 +58,6 @@ const createTransaction = async (collections, users, dacId, role, resources, gro
         await client.close();
         return { response: isCompleted };
     }
-
 }
 
 const rolesTransaction = async (collections, roles, dacId, usersToDelete, currentUsers, currentAdmins, currentMembers) => {
@@ -130,6 +124,7 @@ const resourcesTransaction = async (collections, dacId, resources) => {
 
         // A. Adding policies domain objects.
         const firstResponse = await addResourcesToPolicies(collections[1], dacId, resources, session);
+
         if (firstResponse.insertedCount === 0) {
             throw new Error("Error: No resources have been modified.")
         }
@@ -221,10 +216,19 @@ const addResourcesToPolicies = async (col, dacId, resources, session) => {
 
     const ids = await getResources("dacs", dacId);
 
-    const deleteResponse = await db.collection(col).deleteMany({ _id: { $in: ids } }, { session: session });
+    if(ids !== undefined) await db.collection(col).deleteMany({ _id: { $in: ids } }, { session: session });
+
     const insertResponse = await db.collection(col).insertMany(resources, { session: session });
 
     return insertResponse
+}
+
+const addDACToDACS = async (col, dacs, session) => {
+    const db = await connectToDACdb();
+
+    const response = await db.collection(col).insertOne(dacs, { session: session });
+
+    return response
 }
 
 const postMembers = async (col, dacId, userId, session) => {
@@ -341,6 +345,7 @@ const getMembers = async (col, dacId) => {
 const getResources = async (col, dacId) => {
     const db = await connectToDACdb();
     const data = await db.collection(col).find({ 'dacId': dacId }).toArray()
+
     const { policies } = { ...data[0] }
     return policies
 }
